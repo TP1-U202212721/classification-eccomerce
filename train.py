@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import joblib
 
-dataset = pd.read_csv('train/dataset/dataset_ventas.csv')
+dataset = pd.read_csv('dataset/dataset_ventas.csv')
 features = dataset.drop('etiqueta_riesgo', axis=1)
 labels = dataset['etiqueta_riesgo']
 X_train, X_test, y_train, y_test = train_test_split(
