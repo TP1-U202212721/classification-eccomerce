@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 
-label_name_map = {1: "High Risk", 2: "Moderate Risk", 3: "Low Risk"}
+label_name_map = {1: "High Risk", 2: "Moderate Risk", 3: "Low Risk", 4: "Unverified Risk"}
 
 dataset = pd.read_csv('dataset/dataset_ventas.csv')
 features = dataset.drop('etiqueta_riesgo', axis=1)
@@ -32,8 +32,6 @@ ax.set_xticks(np.arange(len(class_names)))
 ax.set_yticks(np.arange(len(class_names)))
 ax.set_xticklabels(class_names)
 ax.set_yticklabels(class_names)
-ax.set_xlabel('Predicted Values')
-ax.set_ylabel('Actual Values')
 
 thresh = harvest.max() / 2.0 if harvest.size else 0
 for i in range(harvest.shape[0]):
@@ -49,11 +47,21 @@ plt.savefig('results/confusion_matrix.png')
 
 
 df = pd.DataFrame(metrics).transpose()
-df.loc[[k for k in df.index if k not in ("macro avg","weighted avg", "accuracy")], ['recall','f1-score', 'precision']].plot.bar(rot=45)
-plt.ylabel('Score')
-plt.title('Classification Report Metrics')
-plt.tight_layout()
-plt.savefig('results/classification_report_metrics.png')
+metric_df = df.loc[
+    [str(v) for v in class_values],
+    ['recall', 'f1-score', 'precision']
+]
+
+fig_metrics, metric_ax = plt.subplots(figsize=(8, 6))
+metric_df.plot.bar(ax=metric_ax, rot=45)
+
+metric_ax.set_xticklabels(class_names)
+metric_ax.set_xlabel('Risk Category')
+metric_ax.set_ylabel('Score')
+metric_ax.set_title('Classification Report Metrics')
+
+fig_metrics.tight_layout()
+fig_metrics.savefig('results/classification_report_metrics.png')
 
 
 
